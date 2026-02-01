@@ -1,8 +1,50 @@
-# Compiled class file
+### ===== JAVA =====
 *.class
-
-# Log file
 *.log
+
+### ===== BUILD OUTPUT =====
+target/
+build/
+.gradle/
+*.jar
+*.war
+*.ear
+
+### ===== IDE =====
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+### ===== OS =====
+.DS_Store
+Thumbs.db
+
+### ===== ENV / SECRETS =====
+.env
+.env.*
+
+# Spring Boot environment-specific config
+src/main/resources/application-prod.yml
+src/main/resources/application-prod.properties
+src/main/resources/application-local.yml
+src/main/resources/application-local.properties
+src/main/resources/application-dev.yml
+src/main/resources/application-dev.properties
+
+# Externalized config (Docker / Server)
+config/application-*.yml
+config/application-*.properties
+
+### ===== TEST / COVERAGE =====
+coverage/
+jacoco/
+reports/
+
+### ===== TEMP =====
+*.tmp
+*.bak
 
 # BlueJ files
 *.ctxt
@@ -11,10 +53,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
 *.nar
-*.ear
 *.zip
 *.tar.gz
 *.rar
