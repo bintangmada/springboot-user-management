@@ -1,63 +1,127 @@
-### ===== JAVA =====
+############################
+# ===== JAVA / JVM =====
+############################
 *.class
 *.log
+hs_err_pid*
+replay_pid*
 
-### ===== BUILD OUTPUT =====
+############################
+# ===== BUILD OUTPUT =====
+############################
 target/
 build/
+out/
 .gradle/
 *.jar
 *.war
 *.ear
+*.nar
 
-### ===== IDE =====
+############################
+# ===== IDE =====
+############################
 .idea/
 .vscode/
 *.iml
 *.ipr
 *.iws
 
-### ===== OS =====
+# IntelliJ cache (extra safety)
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+
+############################
+# ===== OS FILES =====
+############################
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
 
-### ===== ENV / SECRETS =====
+############################
+# ===== ENV / SECRETS =====
+############################
 .env
 .env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+*.keystore
 
-# Spring Boot environment-specific config
+# Cloud / OAuth credentials
+credentials.json
+firebase-adminsdk*.json
+aws-credentials
+
+############################
+# ===== SPRING BOOT CONFIG =====
+############################
+# Environment-specific config
 src/main/resources/application-prod.yml
 src/main/resources/application-prod.properties
-src/main/resources/application-local.yml
-src/main/resources/application-local.properties
 src/main/resources/application-dev.yml
 src/main/resources/application-dev.properties
+src/main/resources/application-local.yml
+src/main/resources/application-local.properties
 
-# Externalized config (Docker / Server)
+# Secret overrides
+application-secrets.yml
+application-secrets.properties
+
+############################
+# ===== EXTERNALIZED CONFIG =====
+############################
 config/application-*.yml
 config/application-*.properties
 
-### ===== TEST / COVERAGE =====
+############################
+# ===== DOCKER =====
+############################
+.env.docker
+docker-compose.override.yml
+
+############################
+# ===== CI / CD =====
+############################
+jenkins_home/
+*.pipeline
+
+############################
+# ===== TEST / COVERAGE =====
+############################
 coverage/
 jacoco/
 reports/
 
-### ===== TEMP =====
+############################
+# ===== TEMP / CACHE =====
+############################
+tmp/
 *.tmp
 *.bak
 
-# BlueJ files
-*.ctxt
+############################
+# ===== FRONTEND (OPTIONAL) =====
+############################
+node_modules/
+dist/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.nar
+############################
+# ===== ARCHIVE FILES =====
+############################
 *.zip
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+############################
+# ===== MISC =====
+############################
+.mtj.tmp/
+*.ctxt
+.lombok
