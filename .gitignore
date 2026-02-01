@@ -19,17 +19,40 @@ out/
 *.nar
 
 ############################
+# ===== MAVEN =====
+############################
+HELP.md
+.mvn/wrapper/maven-wrapper.jar
+
+############################
 # ===== IDE =====
 ############################
+# IntelliJ IDEA
 .idea/
-.vscode/
 *.iml
 *.ipr
 *.iws
-
-# IntelliJ cache (extra safety)
 .idea/**/workspace.xml
 .idea/**/tasks.xml
+
+# Eclipse / STS
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+.apt_generated
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
 
 ############################
 # ===== OS FILES =====
@@ -44,6 +67,8 @@ Thumbs.db
 ############################
 .env
 .env.*
+.env.docker
+
 *.pem
 *.key
 *.crt
@@ -80,7 +105,6 @@ config/application-*.properties
 ############################
 # ===== DOCKER =====
 ############################
-.env.docker
 docker-compose.override.yml
 
 ############################
