@@ -1,4 +1,4 @@
-package com.bintang.usermanagement.dto;
+package com.bintang.usermanagement.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

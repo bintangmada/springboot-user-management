@@ -1,4 +1,4 @@
-package com.bintang.usermanagement.dto;
+package com.bintang.usermanagement.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
