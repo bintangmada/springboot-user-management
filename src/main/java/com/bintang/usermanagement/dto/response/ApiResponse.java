@@ -12,8 +12,9 @@ public class ApiResponse<T> {
 
     private String status;
     private String message;
-    private T data;
     private LocalDateTime timestamp;
+    private T data;
+
 
     public static <T> ApiResponse<T> success(String message, T data){
         return ApiResponse.<T>builder()
