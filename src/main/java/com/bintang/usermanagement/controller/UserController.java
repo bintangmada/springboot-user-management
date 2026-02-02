@@ -50,5 +50,10 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id){
+        userService.delete(id);
+    }
 
 }
