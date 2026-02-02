@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -20,11 +22,12 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
 
-        Map<String, String> errors = new HashMap<>();
+        Map<String, List<String>> errors = new HashMap<>();
 
         ex.getBindingResult()
                 .getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+                .forEach(error -> errors.computeIfAbsent(error.getField(), key -> new ArrayList<>())
+                        .add(error.getDefaultMessage()));
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
