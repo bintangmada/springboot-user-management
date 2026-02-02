@@ -5,12 +5,13 @@ import com.bintang.usermanagement.dto.request.UpdateUserRequest;
 import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.entity.User;
 import com.bintang.usermanagement.exception.DuplicateResourceException;
+import com.bintang.usermanagement.exception.ResourceNotFoundException;
 import com.bintang.usermanagement.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +36,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getById(Long id) {
-        return null;
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        return mapToResponse(user);
     }
 
     @Override
