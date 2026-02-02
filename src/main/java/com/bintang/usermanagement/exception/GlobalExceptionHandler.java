@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,5 +41,24 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(
+            ResourceNotFoundException ex,
+            HttpServletRequest request
+    ){
+
+        Map<String, List<String>> errors = Map.of(ex.getFieldName(), List.of(ex.getMessage()));
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .message("Resource not found")
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }
