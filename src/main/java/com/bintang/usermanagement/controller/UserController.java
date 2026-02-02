@@ -6,6 +6,10 @@ import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +33,12 @@ public class UserController {
         UserResponse user = userService.getById(id);
         ApiResponse<UserResponse> apiResponse = ApiResponse.success("User retrieved successfully", user);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<UserResponse>>> getAll(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+        Page<UserResponse> userResponsePageable = userService.getAll(pageable);
+        ApiResponse<Page<UserResponse>> apiResponse = ApiResponse.success("User retrieved successfully", userResponsePageable);
+        return ResponseEntity.ok(apiResponse);
     }
 }
