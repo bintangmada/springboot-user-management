@@ -53,7 +53,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse update(Long id, UpdateUserRequest request) {
-        return null;
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        if(userRepository.existsByEmailAndIdNot(request.getEmail(), id)){
+            throw new DuplicateResourceException("email", "email already exists");
+        }
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToResponse(updatedUser);
     }
 
     @Override
