@@ -61,4 +61,23 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateResource(
+            DuplicateResourceException ex,
+            HttpServletRequest request
+    ){
+
+        Map<String, List<String>> errors = Map.of(ex.getField(), List.of(ex.getMessage()));
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.CONFLICT.value())
+                .message("Duplicate resource")
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
 }
