@@ -1,6 +1,7 @@
 package com.bintang.usermanagement.controller;
 
 import com.bintang.usermanagement.dto.request.CreateUserRequest;
+import com.bintang.usermanagement.dto.request.UpdateUserRequest;
 import com.bintang.usermanagement.dto.response.ApiResponse;
 import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.service.UserService;
@@ -41,4 +42,13 @@ public class UserController {
         ApiResponse<Page<UserResponse>> apiResponse = ApiResponse.success("User retrieved successfully", userResponsePageable);
         return ResponseEntity.ok(apiResponse);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> update(@PathVariable("id") Long id, @RequestBody @Valid UpdateUserRequest request){
+        UserResponse updatedUser = userService.update(id, request);
+        ApiResponse<UserResponse> apiResponse = ApiResponse.success("User updated successfully", updatedUser);
+        return ResponseEntity.ok(apiResponse);
+    }
+
+
 }
