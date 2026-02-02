@@ -24,7 +24,6 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
-
         Map<String, List<String>> errors = new HashMap<>();
 
         ex.getBindingResult()
@@ -32,15 +31,7 @@ public class GlobalExceptionHandler {
                 .forEach(error -> errors.computeIfAbsent(error.getField(), key -> new ArrayList<>())
                         .add(error.getDefaultMessage()));
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message("Argument not valid")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
-                .errors(errors)
-                .build();
-
-        return ResponseEntity.badRequest().body(errorResponse);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", request, errors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -48,18 +39,8 @@ public class GlobalExceptionHandler {
             ResourceNotFoundException ex,
             HttpServletRequest request
     ){
-
         Map<String, List<String>> errors = Map.of(ex.getFieldName(), List.of(ex.getMessage()));
-
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.NOT_FOUND.value())
-                .message("Resource not found")
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
-                .errors(errors)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        return buildErrorResponse(HttpStatus.NOT_FOUND, "Resource not found", request, errors);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
@@ -67,17 +48,37 @@ public class GlobalExceptionHandler {
             DuplicateResourceException ex,
             HttpServletRequest request
     ){
-
         Map<String, List<String>> errors = Map.of(ex.getField(), List.of(ex.getMessage()));
+        return buildErrorResponse(HttpStatus.CONFLICT, "Duplicate resource", request, errors);
+    }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(
+        Exception ex,
+        HttpServletRequest request
+    ){
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Internal server error",
+                request,
+                Map.of("error", List.of(ex.getMessage()))
+        );
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request,
+            Map<String, List<String>> errors
+    ){
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.CONFLICT.value())
-                .message("Duplicate resource")
+                .code(status.value())
+                .message(message)
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .errors(errors)
                 .build();
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        return ResponseEntity.status(status).body(errorResponse);
     }
 }
