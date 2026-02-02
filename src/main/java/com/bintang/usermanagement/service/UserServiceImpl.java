@@ -46,8 +46,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<UserResponse> getAll(Pageable pageable) {
-        return null;
+        return userRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Override
