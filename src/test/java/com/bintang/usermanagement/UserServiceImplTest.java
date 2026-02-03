@@ -212,4 +212,33 @@ public class UserServiceImplTest {
                 () -> userService.update(1L, request)
         );
     }
+
+    // ================= DELETE =================
+
+    @Test
+    void delete_success() {
+        User user = User.builder()
+                .id(1L)
+                .isDeleted(false)
+                .build();
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        userService.delete(1L);
+
+        assertTrue(user.isDeleted());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void delete_notFound_shouldThrowException() {
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> userService.delete(1L)
+        );
+    }
 }
