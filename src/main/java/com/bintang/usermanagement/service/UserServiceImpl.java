@@ -7,9 +7,11 @@ import com.bintang.usermanagement.entity.User;
 import com.bintang.usermanagement.exception.DuplicateResourceException;
 import com.bintang.usermanagement.exception.ResourceNotFoundException;
 import com.bintang.usermanagement.repository.UserRepository;
+import com.bintang.usermanagement.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         return mapToResponse(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> search(String name, String email, Pageable pageable) {
+        Specification<User> spec = UserSpecification.filter(name, email);
+        return userRepository.findAll(spec, pageable).map(this::mapToResponse);
     }
 
     @Override

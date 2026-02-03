@@ -3,10 +3,12 @@ package com.bintang.usermanagement.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 @Schema(description = "User update request payload")
 @Data
+@Builder
 public class UpdateUserRequest {
 
     @Schema(example = "John Doe")
