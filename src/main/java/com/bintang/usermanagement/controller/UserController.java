@@ -102,6 +102,14 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @Operation(
+            summary = "Search user",
+            description = "search user by name or email"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<UserResponse>>> search(
             @RequestParam(required = false) String name,
