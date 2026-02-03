@@ -102,6 +102,18 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<UserResponse>>> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            Pageable pageable
+    ) {
+        Page<UserResponse> userResponse = userService.search(name, email, pageable);
+        return ResponseEntity.ok().body(ApiResponse.success("User found", userResponse));
+    }
+
+
     @Operation(
             summary = "Delete user",
             description = "Delete user by ID"

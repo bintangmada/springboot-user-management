@@ -10,6 +10,7 @@ public interface UserService {
 
     UserResponse create(CreateUserRequest request);
     UserResponse getById(Long id);
+    Page<UserResponse> search(String name, String email, Pageable pageable);
     Page<UserResponse> getAll(Pageable pageable);
     UserResponse update(Long id, UpdateUserRequest request);
     void delete(Long id);
