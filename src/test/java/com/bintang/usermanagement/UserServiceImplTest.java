@@ -4,6 +4,7 @@ import com.bintang.usermanagement.dto.request.CreateUserRequest;
 import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.entity.User;
 import com.bintang.usermanagement.exception.DuplicateResourceException;
+import com.bintang.usermanagement.exception.ResourceNotFoundException;
 import com.bintang.usermanagement.repository.UserRepository;
 import com.bintang.usermanagement.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,5 +75,36 @@ public class UserServiceImplTest {
         assertEquals("email already exists", ex.getMessage());
 
         verify(userRepository, never()).save(any());
+    }
+
+    // ================= GET BY ID =================
+
+    @Test
+    void getById_success() {
+        User user = User.builder()
+                .id(1L)
+                .name("Bintang")
+                .email("bintang@mail.com")
+                .build();
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        UserResponse response = userService.getById(1L);
+
+        assertEquals(1L, response.getId());
+        assertEquals("Bintang", response.getName());
+        assertEquals("bintang@mail.com", response.getEmail());
+    }
+
+    @Test
+    void getById_notFound_shouldThrowException() {
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> userService.getById(1L)
+        );
     }
 }
