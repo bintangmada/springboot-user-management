@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,9 +59,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect((ResultMatcher) jsonPath("$.message").value("User created successfully"))
-                .andExpect((ResultMatcher) jsonPath("$.data.id").value(1))
-                .andExpect((ResultMatcher) jsonPath("$.data.name").value("Bintang"));
+                .andExpect(jsonPath("$.message").value("User created successfully"))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.name").value("Bintang"));
     }
 
     @Test
@@ -79,8 +79,8 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.message").value("Users retrieved successfully"))
-                .andExpect((ResultMatcher) jsonPath("$.data.content[0].id").value(1));
+                .andExpect(jsonPath("$.message").value("Users retrieved successfully"))
+                .andExpect(jsonPath("$.data.content[0].id").value(1));
     }
 
     @Test
@@ -95,19 +95,21 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users/1"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.data.id").value(1))
-                .andExpect((ResultMatcher) jsonPath("$.data.name").value("Bintang"));
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.name").value("Bintang"));
     }
 
     @Test
     void updateUser_success() throws Exception {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .name("Bintang Update")
+                .email("bintang.update@mail.com")
                 .build();
 
         UserResponse response = UserResponse.builder()
                 .id(1L)
                 .name("Bintang Update")
+                .email("bintang.update@mail.com")
                 .build();
 
         when(userService.update(eq(1L), any(UpdateUserRequest.class)))
@@ -117,9 +119,24 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.message").value("User updated successfully"))
-                .andExpect((ResultMatcher) jsonPath("$.data.name").value("Bintang Update"));
+                .andExpect(jsonPath("$.message").value("User updated successfully"))
+                .andExpect(jsonPath("$.data.name").value("Bintang Update"));
     }
+
+
+    @Test
+    void updateUser_shouldFail_whenEmailMissing() throws Exception {
+        UpdateUserRequest request = UpdateUserRequest.builder()
+                .name("Bintang Update")
+                .build();
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.email").exists());
+    }
+
 
     @Test
     void searchUser_success() throws Exception {
@@ -137,8 +154,8 @@ class UserControllerTest {
         mockMvc.perform(get("/api/users/search")
                         .param("name", "Bintang"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.message").value("User found"))
-                .andExpect((ResultMatcher) jsonPath("$.data.content[0].name").value("Bintang"));
+                .andExpect(jsonPath("$.message").value("User found"))
+                .andExpect(jsonPath("$.data.content[0].name").value("Bintang"));
     }
 
     @Test
@@ -147,7 +164,7 @@ class UserControllerTest {
 
         mockMvc.perform(delete("/api/users/1"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.message").value("User deleted successfully"));
+                .andExpect(jsonPath("$.message").value("User deleted successfully"));
     }
 
 }
