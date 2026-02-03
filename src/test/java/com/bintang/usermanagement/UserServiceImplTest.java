@@ -9,10 +9,17 @@ import com.bintang.usermanagement.repository.UserRepository;
 import com.bintang.usermanagement.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,5 +113,31 @@ public class UserServiceImplTest {
                 ResourceNotFoundException.class,
                 () -> userService.getById(1L)
         );
+    }
+
+    // ================= SEARCH =================
+
+    @Test
+    void search_success() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        User user = User.builder()
+                .id(1L)
+                .name("Bintang")
+                .email("bintang@mail.com")
+                .build();
+
+        Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
+
+        when(userRepository.findAll(
+                ArgumentMatchers.<Specification<User>>any(),
+                eq(pageable))
+        ).thenReturn(page);
+
+        Page<UserResponse> result =
+                userService.search("Bintang", "bintang@mail.com", pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Bintang", result.getContent().get(0).getName());
     }
 }
