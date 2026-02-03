@@ -82,13 +82,17 @@ com.bintang.usermanagement
 
 `POST /api/users`
 
-### 📄 Get Users (Pagination & Search)
+### 📄 Get Users (Pagination)
 
 `GET /api/users?page=0&size=10&sort=id,asc`
 
 ### 🔍 Get User by ID
 
 `GET /api/users/{id}`
+
+### 🔍 Search User
+
+`GET /api/users/search`
 
 ### ✏️ Update User
 
@@ -108,12 +112,12 @@ com.bintang.usermanagement
 {
   "status": "SUCCESS",
   "message": "User created successfully",
+  "timestamp": "2026-02-03T13:06:52.2660588",
   "data": {
-    "id": 1,
+    "id": 5,
     "name": "John",
-    "email": "john@mail.com"
-  },
-  "timestamp": "2026-02-02T14:30:12"
+    "email": "john@email.com"
+  }
 }
 ```
 
@@ -121,12 +125,15 @@ com.bintang.usermanagement
 
 ```json
 {
-  "status": "ERROR",
-  "message": "Validation failed",
+  "code": 409,
+  "message": "Duplicate resource",
+  "path": "/api/users",
+  "timestamp": "2026-02-03T13:06:00.9682837",
   "errors": {
-    "email": "must be a well-formed email address"
-  },
-  "timestamp": "2026-02-02T14:30:12"
+    "email": [
+      "email already exists"
+    ]
+  }
 }
 ```
 
