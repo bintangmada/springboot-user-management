@@ -5,6 +5,9 @@ import com.bintang.usermanagement.dto.request.UpdateUserRequest;
 import com.bintang.usermanagement.dto.response.ApiResponse;
 import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "User Management", description = "Operations related to user management")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -22,6 +26,12 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "Create new user")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "User created successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Validation error"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Duplicate user")
+    })
     @PostMapping
     public ResponseEntity<ApiResponse<UserResponse>> create(@RequestBody @Valid CreateUserRequest request) {
         UserResponse userResponse = userService.create(request);
@@ -29,18 +39,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable("id") Long id) {
-        UserResponse user = userService.getById(id);
-        ApiResponse<UserResponse> apiResponse = ApiResponse.success("User retrieved successfully", user);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
+    @Operation(
+            summary = "Get all users",
+            description = "Retrieve paginated list of users"
+    )
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserResponse>>> getAll(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<UserResponse> userResponsePageable = userService.getAll(pageable);
         ApiResponse<Page<UserResponse>> apiResponse = ApiResponse.success("User retrieved successfully", userResponsePageable);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable("id") Long id) {
+        UserResponse user = userService.getById(id);
+        ApiResponse<UserResponse> apiResponse = ApiResponse.success("User retrieved successfully", user);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PutMapping("/{id}")
