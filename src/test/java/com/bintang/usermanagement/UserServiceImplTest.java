@@ -40,8 +40,8 @@ public class UserServiceImplTest {
     @Test
     void create_success() {
         CreateUserRequest request = CreateUserRequest.builder()
-                .name("john")
-                .email("john@mail.com")
+                .name("Bintang")
+                .email("bintang@mail.com")
                 .build();
 
         when(userRepository.existsByEmail(request.getEmail()))
