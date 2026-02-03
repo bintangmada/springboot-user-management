@@ -1,6 +1,7 @@
 package com.bintang.usermanagement;
 
 import com.bintang.usermanagement.dto.request.CreateUserRequest;
+import com.bintang.usermanagement.dto.request.UpdateUserRequest;
 import com.bintang.usermanagement.dto.response.UserResponse;
 import com.bintang.usermanagement.entity.User;
 import com.bintang.usermanagement.exception.DuplicateResourceException;
@@ -162,5 +163,53 @@ public class UserServiceImplTest {
 
         assertEquals(1, result.getTotalElements());
         assertEquals("Bintang", result.getContent().get(0).getName());
+    }
+
+    // ================= UPDATE =================
+
+    @Test
+    void update_success() {
+        UpdateUserRequest request = UpdateUserRequest.builder()
+                .name("Updated Name")
+                .email("updated@mail.com")
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .name("Old Name")
+                .email("old@mail.com")
+                .build();
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userRepository.existsByEmailAndIdNot(request.getEmail(), 1L))
+                .thenReturn(false);
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserResponse response = userService.update(1L, request);
+
+        assertEquals("Updated Name", response.getName());
+        assertEquals("updated@mail.com", response.getEmail());
+    }
+
+    @Test
+    void update_duplicateEmail_shouldThrowException() {
+        UpdateUserRequest request = UpdateUserRequest.builder()
+                .email("dup@mail.com")
+                .build();
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(new User()));
+
+        when(userRepository.existsByEmailAndIdNot(request.getEmail(), 1L))
+                .thenReturn(true);
+
+        assertThrows(
+                DuplicateResourceException.class,
+                () -> userService.update(1L, request)
+        );
     }
 }
