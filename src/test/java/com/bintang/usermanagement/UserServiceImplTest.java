@@ -140,4 +140,27 @@ public class UserServiceImplTest {
         assertEquals(1, result.getTotalElements());
         assertEquals("Bintang", result.getContent().get(0).getName());
     }
+
+    // ================= GET ALL =================
+
+    @Test
+    void getAll_success() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        User user = User.builder()
+                .id(1L)
+                .name("Bintang")
+                .email("bintang@mail.com")
+                .build();
+
+        Page<User> page = new PageImpl<>(List.of(user), pageable, 1);
+
+        when(userRepository.findAll(pageable))
+                .thenReturn(page);
+
+        Page<UserResponse> result = userService.getAll(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Bintang", result.getContent().get(0).getName());
+    }
 }
